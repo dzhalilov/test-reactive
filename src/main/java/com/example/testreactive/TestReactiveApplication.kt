@@ -1,13 +1,11 @@
-package com.example.testreactive;
+package com.example.testreactive
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-public class TestReactiveApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(TestReactiveApplication.class, args);
+class TestReactiveApplication {
+    fun main(args: Array<String>) {
+        SpringApplication.run(TestReactiveApplication::class.java, *args)
     }
-
 }
