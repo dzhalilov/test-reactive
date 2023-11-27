@@ -3,6 +3,9 @@ package com.example.testreactive.service.impl
 import com.example.testreactive.dto.PersonDto
 import com.example.testreactive.dto.PersonInputDto
 import com.example.testreactive.service.PersonService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
@@ -11,7 +14,13 @@ import org.springframework.web.reactive.function.client.awaitBody
 class PersonServiceImpl (webClientBuilder: WebClient.Builder) : PersonService {
     private val webClient: WebClient = webClientBuilder.build()
 
-    override suspend fun getRandomPersons(): List<PersonDto> = getFastRandomPersons() + getSlowRandomPersons()
+    override suspend fun getRandomPersons(): List<PersonDto> {
+        return withContext(Dispatchers.IO) {
+            val fastRandomPersons = async { getFastRandomPersons() }
+            val slowRandomPersons = async { getSlowRandomPersons() }
+            fastRandomPersons.await() + slowRandomPersons.await()
+        }
+    }
 
     override suspend fun getFastRandomPersons(): List<PersonDto> = webClient.get()
         .uri("http://localhost:8081/persons/random")
