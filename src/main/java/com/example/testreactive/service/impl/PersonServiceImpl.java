@@ -4,60 +4,47 @@ import com.example.testreactive.dto.PersonDto;
 import com.example.testreactive.dto.PersonInputDto;
 import com.example.testreactive.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 @Service
 public class PersonServiceImpl implements PersonService {
 
-    private final RestTemplate restTemplate;
+    private final WebClient webClient;
 
 
     @Autowired
-    public PersonServiceImpl(RestTemplateBuilder builder) {
-        this.restTemplate = builder.build();
+    public PersonServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
     }
 
 
     @Override
-    public List<PersonDto> getRandomPersons() {
-        return Stream.of(
-                        getFastRandomPersons(),
-                        getSlowRandomPersons()
-                )
-                .flatMap(List::stream)
-                .toList();
+    public Flux<PersonDto> getRandomPersons() {
+        return getFastRandomPersons().concatWith(getSlowRandomPersons());
     }
 
     @Override
-    public List<PersonDto> getFastRandomPersons() {
-        return Stream.of(
-                        Objects.requireNonNull(
-                                restTemplate.getForObject("http://localhost:8081/persons/random", PersonInputDto[].class)
-                        )
-                )
-                .map(this::toPersonDto)
-                .toList();
+    public Flux<PersonDto> getFastRandomPersons() {
+        return webClient.get()
+                .uri("http://localhost:8081/persons/random")
+                .retrieve()
+                .bodyToFlux(PersonInputDto.class)
+                .map(this::toPersonDto);
     }
 
     @Override
-    public List<PersonDto> getSlowRandomPersons() {
-        return Stream.of(
-                        Objects.requireNonNull(
-                                restTemplate.getForObject("http://localhost:8082/persons/random", PersonInputDto[].class)
-                        )
-                )
-                .map(this::toPersonDto)
-                .toList();
+    public Flux<PersonDto> getSlowRandomPersons() {
+        return webClient.get()
+                .uri("http://localhost:8082/persons/random")
+                .retrieve()
+                .bodyToFlux(PersonInputDto.class)
+                .map(this::toPersonDto);
     }
 
     @Override
-    public List<PersonDto> getStartsFistName(String firstNameLetter) {
+    public Flux<PersonDto> getStartsFistName(String firstNameLetter) {
         return null;
     }
 

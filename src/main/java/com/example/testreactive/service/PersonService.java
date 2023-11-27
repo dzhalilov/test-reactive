@@ -1,13 +1,12 @@
 package com.example.testreactive.service;
 
 import com.example.testreactive.dto.PersonDto;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface PersonService {
-    List<PersonDto> getRandomPersons();
-    List<PersonDto> getFastRandomPersons();
-    List<PersonDto> getSlowRandomPersons();
+    Flux<PersonDto> getRandomPersons();
+    Flux<PersonDto> getFastRandomPersons();
+    Flux<PersonDto> getSlowRandomPersons();
 
-    List<PersonDto> getStartsFistName(String firstNameLetter);
+    Flux<PersonDto> getStartsFistName(String firstNameLetter);
 }
