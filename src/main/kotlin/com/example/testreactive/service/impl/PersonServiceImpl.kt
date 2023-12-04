@@ -3,8 +3,10 @@ package com.example.testreactive.service.impl
 import com.example.testreactive.dto.PersonDto
 import com.example.testreactive.dto.PersonInputDto
 import com.example.testreactive.service.PersonService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
