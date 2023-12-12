@@ -4,10 +4,8 @@ import com.example.testreactive.dto.PersonDto;
 import com.example.testreactive.dto.PersonInputDto;
 import com.example.testreactive.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
