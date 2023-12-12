@@ -3,5 +3,8 @@ server:
 spring:
   application:
     name: root-api
+  threads:
+    virtual:
+      enabled: true
   main:
     allow-bean-definition-overriding: true

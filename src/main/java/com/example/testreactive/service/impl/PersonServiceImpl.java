@@ -6,8 +6,10 @@ import com.example.testreactive.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -15,12 +17,11 @@ import java.util.stream.Stream;
 @Service
 public class PersonServiceImpl implements PersonService {
 
-    private final RestTemplate restTemplate;
-
+    private final RestClient dataClient;
 
     @Autowired
-    public PersonServiceImpl(RestTemplateBuilder builder) {
-        this.restTemplate = builder.build();
+    public PersonServiceImpl(RestClient dataClient) {
+        this.dataClient = dataClient;
     }
 
 
@@ -36,22 +37,20 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public List<PersonDto> getFastRandomPersons() {
-        return Stream.of(
-                        Objects.requireNonNull(
-                                restTemplate.getForObject("http://localhost:8081/persons/random", PersonInputDto[].class)
-                        )
-                )
+        return Arrays.stream(Objects.requireNonNull(dataClient.get()
+                        .uri("http://localhost:8081/persons/random")
+                        .retrieve()
+                        .body(PersonInputDto[].class)))
                 .map(this::toPersonDto)
                 .toList();
     }
 
     @Override
     public List<PersonDto> getSlowRandomPersons() {
-        return Stream.of(
-                        Objects.requireNonNull(
-                                restTemplate.getForObject("http://localhost:8082/persons/random", PersonInputDto[].class)
-                        )
-                )
+        return Arrays.stream(Objects.requireNonNull(dataClient.get()
+                        .uri("http://localhost:8082/persons/random")
+                        .retrieve()
+                        .body(PersonInputDto[].class)))
                 .map(this::toPersonDto)
                 .toList();
     }
